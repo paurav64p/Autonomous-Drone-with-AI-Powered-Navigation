@@ -1,0 +1,58 @@
+# object_detection.py
+import cv2
+import tensorflow.lite as tflite
+import numpy as np
+
+# Load TFLite model
+interpreter = tflite.Interpreter(model_path="model.tflite")
+interpreter.allocate_tensors()
+
+# Load image
+cap = cv2.VideoCapture(0)
+while cap.isOpened():
+    ret, frame = cap.read()
+    if not ret:
+        break
+    
+    # Preprocess image
+    input_data = cv2.resize(frame, (224, 224))
+    input_data = np.expand_dims(input_data, axis=0).astype(np.float32)
+    
+    # Run inference
+    input_tensor_index = interpreter.get_input_details()[0]['index']
+    output_tensor_index = interpreter.get_output_details()[0]['index']
+    interpreter.set_tensor(input_tensor_index, input_data)
+    interpreter.invoke()
+    output_data = interpreter.get_tensor(output_tensor_index)
+    
+    # Display results
+    cv2.imshow('Frame', frame)
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
+
+cap.release()
+cv2.destroyAllWindows()
+
+# path_planning.py
+import heapq
+
+def a_star(start, goal, graph):
+    open_list = []
+    heapq.heappush(open_list, (0, start))
+    came_from = {start: None}
+    cost_so_far = {start: 0}
+    
+    while open_list:
+        _, current = heapq.heappop(open_list)
+        if current == goal:
+            break
+        
+        for neighbor, cost in graph[current]:
+            new_cost = cost_so_far[current] + cost
+            if neighbor not in cost_so_far or new_cost < cost_so_far[neighbor]:
+                cost_so_far[neighbor] = new_cost
+                priority = new_cost
+                heapq.heappush(open_list, (priority, neighbor))
+                came_from[neighbor] = current
+    
+    return came_from
