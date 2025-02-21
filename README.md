@@ -15,7 +15,7 @@ This project involves designing an autonomous drone with AI-powered navigation u
 ## Installation and Setup
 ```sh
 # Clone the repository
-git clone https://github.com/yourusername/Autonomous-Drone-Navigation.git
+git clone https://github.com/paurav64p/Autonomous-Drone-Navigation.git
 cd Autonomous-Drone-Navigation
 
 # Install dependencies
